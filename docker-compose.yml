@@ -7,3 +7,5 @@ services:
     build: ./api
     ports:
       - "3001:3001"
+    volumes:
+      - /var/new-demo-docker/uploads:/usr/src/app/uploads

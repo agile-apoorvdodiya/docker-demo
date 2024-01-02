@@ -1,7 +1,10 @@
-import express from "express";
-import { execSync } from "child_process";
-import config from "dotenv";
-import cors from "cors";
+const express = require("express");
+const { execSync } = require("child_process");
+const config = require("dotenv");
+const cors = require("cors");
+const multer = require("multer");
+const { extname, join } = require("path");
+const { readdirSync } = require("fs");
 
 config.config();
 
@@ -13,11 +16,40 @@ const port = (() => {
 })();
 
 app.use(cors());
+
+// fetch version of nodejs
 app.get("/", (req, res) => {
   const version = execSync("node --version").toString();
   res.json(JSON.parse(JSON.stringify({ data: version })));
 });
 
+// configure multer
+const useMulter = multer({
+  storage: multer.diskStorage({
+    destination: (req, file, cb) => {
+      cb(null, "uploads");
+    },
+    filename: (req, file, cb) => {
+      cb(null, Date.now() + extname(file.originalname));
+    },
+  }),
+});
+
+// upload files
+app.post("/upload", useMulter.single("file"), (req, res) => {
+  if (req.file) return res.json(req.file);
+  else
+    return res.status(400).json({
+      message: "No file was provided",
+    });
+});
+
+app.get("/list-files", (req, res) => {
+  const uploadPath = join(__dirname, "uploads");
+  const list = readdirSync(uploadPath);
+  res.json({ uploadPath, list });
+});
+
 app.listen(port, () => {
-  console.log("listening on port: ", port);
+  console.info("listening on port: ", port);
 });
