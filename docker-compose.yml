@@ -1,0 +1,9 @@
+services:
+  docker-demo-react:
+    build: ./app
+    ports:
+      - "3000:3000"
+  docker-demo-node:
+    build: ./api
+    ports:
+      - "3001:3001"
