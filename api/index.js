@@ -50,6 +50,20 @@ app.get("/list-files", (req, res) => {
   res.json({ uploadPath, list });
 });
 
+app.get("/call-service", (req, res) => {
+  fetch(process.env.SERVER_2)
+    .then((response) => {
+      console.log("res success??", response.status);
+      response.json().then((jsonResponse) => {
+        res.json(jsonResponse);
+      });
+    })
+    .catch((err) => {
+      console.log("api error >> ", err);
+      return res.status(500).json({ message: "somehing went wrong" });
+    });
+});
+
 app.listen(port, () => {
   console.info("listening on port: ", port);
 });

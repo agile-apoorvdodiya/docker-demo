@@ -9,3 +9,11 @@ services:
       - "3001:3001"
     volumes:
       - /var/new-demo-docker/uploads:/usr/src/app/uploads
+    network_mode: demo-network-1
+  docker-server2:
+    build: ./server2
+    ports:
+      - "3002:3002"
+    # use the same network to communicate internal service call
+    # network_mode: demo-network-1
+    network_mode: demo-network-2
